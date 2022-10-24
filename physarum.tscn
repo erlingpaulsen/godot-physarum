@@ -1,0 +1,559 @@
+[gd_scene load_steps=6 format=3 uid="uid://c1qixfnsrghhg"]
+
+[ext_resource type="Script" path="res://physarum.gd" id="1_h6n7p"]
+[ext_resource type="Shader" path="res://agent_map.gdshader" id="2_6h3pl"]
+[ext_resource type="Shader" path="res://trail_map.gdshader" id="3_7688f"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_e7lq4"]
+shader = ExtResource("2_6h3pl")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vdptg"]
+shader = ExtResource("3_7688f")
+shader_parameter/color_1 = Color(0, 0, 0, 1)
+shader_parameter/color_2 = Color(0.505882, 0.0980392, 0.639216, 1)
+shader_parameter/color_3 = Color(0.87451, 0.298039, 0, 1)
+shader_parameter/color_4 = Color(1, 0.886275, 0.203922, 1)
+
+[node name="Physarum" type="Node2D" node_paths=PackedStringArray("agent_sprite", "trail_sprite", "agent_label", "step_label", "process_time_label", "motor_time_label", "sensor_time_label", "diffusion_time_label", "decay_time_label", "image_time_label", "population_percent_label", "decay_factor_label", "cell_occupancy_label", "sensor_distance_label", "sensor_angle_label", "rotation_angle_label", "step_size_label", "deposit_size_label")]
+script = ExtResource("1_h6n7p")
+agent_sprite = NodePath("VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/AgentTexture")
+trail_sprite = NodePath("VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer/TrailTexture")
+agent_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/Agents")
+step_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/Step")
+process_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/ProcessTime")
+motor_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/MotorTime")
+sensor_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/SensorTime")
+diffusion_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/DiffusionTime")
+decay_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/DecayTime")
+image_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/ImageTime")
+population_percent_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/PopulationPercent")
+decay_factor_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/DecayFactor")
+cell_occupancy_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/CellOccupancy")
+sensor_distance_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/SensorDistance")
+sensor_angle_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/SensorAngle")
+rotation_angle_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/RotationAngle")
+step_size_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/StepSize")
+deposit_size_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/DepositSize")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_right = 1280.0
+offset_bottom = 720.0
+size_flags_horizontal = 3
+
+[node name="Panel" type="Panel" parent="VBoxContainer"]
+layout_mode = 2
+offset_right = 1280.0
+offset_bottom = 83.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="Title" type="Label" parent="VBoxContainer/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -11.5
+offset_right = 20.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 28
+text = "Physarum Polycephalum Simulation"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+offset_top = 87.0
+offset_right = 1280.0
+offset_bottom = 506.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Panel" type="Panel" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+offset_right = 638.0
+offset_bottom = 419.0
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/Panel/MarginContainer"]
+layout_mode = 2
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 618.0
+offset_bottom = 399.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+offset_right = 598.0
+offset_bottom = 37.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 24
+text = "Agent Map"
+horizontal_alignment = 1
+
+[node name="AgentTexture" type="TextureRect" parent="VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+material = SubResource("ShaderMaterial_e7lq4")
+layout_mode = 2
+offset_top = 41.0
+offset_right = 598.0
+offset_bottom = 379.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+stretch_mode = 5
+
+[node name="Panel2" type="Panel" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+offset_left = 642.0
+offset_right = 1280.0
+offset_bottom = 419.0
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer/Panel2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer/Panel2/MarginContainer"]
+layout_mode = 2
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 618.0
+offset_bottom = 399.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer"]
+layout_mode = 2
+offset_right = 598.0
+offset_bottom = 37.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 24
+text = "Trail Map"
+horizontal_alignment = 1
+
+[node name="TrailTexture" type="TextureRect" parent="VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer"]
+material = SubResource("ShaderMaterial_vdptg")
+layout_mode = 2
+offset_top = 41.0
+offset_right = 598.0
+offset_bottom = 379.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+stretch_mode = 5
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+offset_top = 510.0
+offset_right = 1280.0
+offset_bottom = 720.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="Panel" type="Panel" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+offset_right = 425.0
+offset_bottom = 210.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.5
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer2/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -9.0
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer"]
+layout_mode = 2
+offset_left = 40.0
+offset_top = 20.0
+offset_right = 405.0
+offset_bottom = 208.0
+theme_override_constants/separation = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+offset_right = 172.0
+offset_bottom = 188.0
+size_flags_horizontal = 3
+
+[node name="Label8" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_right = 172.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 12
+text = "Agents"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label7" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 24.0
+offset_right = 172.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 12
+text = "Steps"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 48.0
+offset_right = 172.0
+offset_bottom = 68.0
+theme_override_font_sizes/font_size = 12
+text = "Process time"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 72.0
+offset_right = 172.0
+offset_bottom = 92.0
+theme_override_font_sizes/font_size = 12
+text = "Motor stage"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 96.0
+offset_right = 172.0
+offset_bottom = 116.0
+theme_override_font_sizes/font_size = 12
+text = "Sensor stage"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 120.0
+offset_right = 172.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 12
+text = "Diffusion stage"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label5" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 144.0
+offset_right = 172.0
+offset_bottom = 164.0
+theme_override_font_sizes/font_size = 12
+text = "Decay stage"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label6" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 168.0
+offset_right = 172.0
+offset_bottom = 188.0
+theme_override_font_sizes/font_size = 12
+text = "Image stage"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer"]
+layout_mode = 2
+offset_left = 192.0
+offset_right = 365.0
+offset_bottom = 188.0
+size_flags_horizontal = 3
+
+[node name="Agents" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_right = 173.0
+offset_bottom = 17.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="Step" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 21.0
+offset_right = 173.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="ProcessTime" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 42.0
+offset_right = 173.0
+offset_bottom = 59.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="MotorTime" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 63.0
+offset_right = 173.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="SensorTime" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 84.0
+offset_right = 173.0
+offset_bottom = 101.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="DiffusionTime" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 105.0
+offset_right = 173.0
+offset_bottom = 122.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="DecayTime" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 126.0
+offset_right = 173.0
+offset_bottom = 143.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="ImageTime" type="Label" parent="VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 147.0
+offset_right = 173.0
+offset_bottom = 164.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="Panel2" type="Panel" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+offset_left = 429.0
+offset_right = 1280.0
+offset_bottom = 210.0
+size_flags_horizontal = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/HBoxContainer2/Panel2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -9.0
+offset_bottom = 9.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer"]
+layout_mode = 2
+offset_left = 40.0
+offset_top = 20.0
+offset_right = 831.0
+offset_bottom = 208.0
+theme_override_constants/separation = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+offset_right = 182.0
+offset_bottom = 188.0
+size_flags_horizontal = 3
+
+[node name="Label8" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_right = 182.0
+offset_bottom = 20.0
+theme_override_font_sizes/font_size = 12
+text = "Population percent"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label7" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 24.0
+offset_right = 182.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 12
+text = "Decay factor"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 48.0
+offset_right = 182.0
+offset_bottom = 68.0
+theme_override_font_sizes/font_size = 12
+text = "Max cell occupancy"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label2" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 72.0
+offset_right = 182.0
+offset_bottom = 92.0
+theme_override_font_sizes/font_size = 12
+text = "Sensor distance"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label3" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 96.0
+offset_right = 182.0
+offset_bottom = 116.0
+theme_override_font_sizes/font_size = 12
+text = "Sensor angle"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label4" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 120.0
+offset_right = 182.0
+offset_bottom = 140.0
+theme_override_font_sizes/font_size = 12
+text = "Rotation angle"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label5" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 144.0
+offset_right = 182.0
+offset_bottom = 164.0
+theme_override_font_sizes/font_size = 12
+text = "Step size"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label6" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 168.0
+offset_right = 182.0
+offset_bottom = 188.0
+theme_override_font_sizes/font_size = 12
+text = "Deposit size"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+offset_left = 202.0
+offset_right = 385.0
+offset_bottom = 188.0
+size_flags_horizontal = 3
+
+[node name="PopulationPercent" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_right = 183.0
+offset_bottom = 17.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="DecayFactor" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 21.0
+offset_right = 183.0
+offset_bottom = 38.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="CellOccupancy" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 42.0
+offset_right = 183.0
+offset_bottom = 59.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="SensorDistance" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 63.0
+offset_right = 183.0
+offset_bottom = 80.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="SensorAngle" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 84.0
+offset_right = 183.0
+offset_bottom = 101.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="RotationAngle" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 105.0
+offset_right = 183.0
+offset_bottom = 122.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="StepSize" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 126.0
+offset_right = 183.0
+offset_bottom = 143.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="DepositSize" type="Label" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 147.0
+offset_right = 183.0
+offset_bottom = 164.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+offset_left = 405.0
+offset_right = 588.0
+offset_bottom = 188.0
+size_flags_horizontal = 3
+
+[node name="VBoxContainer4" type="VBoxContainer" parent="VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+offset_left = 608.0
+offset_right = 791.0
+offset_bottom = 188.0
+size_flags_horizontal = 3
