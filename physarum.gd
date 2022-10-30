@@ -5,7 +5,7 @@ var image_size : Vector2i = Vector2i(250, 250)
 var population_percent : float = 20#randf_range(5, 40) # population as percentage of image area
 var diffusion_kernel_size : int = 3
 var k : int = (diffusion_kernel_size - 1) / 2
-var decay_factor : float = 0.99#randf_range(0.9, 0.999) # Trail map diffusion decay factor
+var decay_factor : float = 0.97#randf_range(0.9, 0.999) # Trail map diffusion decay factor
 var max_occupancy : int = 3#randi_range(3, 10) # Maximum number of agents that can inhabit the same cell
 
 # Agent parameters
@@ -105,6 +105,7 @@ func _process(_delta):
 
 
 func _initialize_maps() -> void:
+	# Initialize two-dimensional array for agent and trail maps with zero values
 	trail_map = []
 	trail_map.resize(image_size.x)
 	trail_map_summed_area = []
@@ -129,21 +130,19 @@ func _initialize_agents() -> void:
 	var cell_occupied = true
 	var x : float
 	var y : float
+	var rot : float
 	for i in range(n_agents):
 		agents[i] = {}
 		cell_occupied = true
 		while cell_occupied:
-#			x = randf_range(0, image_size.x - (image_size.x / 1000.0))
-#			y = randf_range(0, image_size.y - (image_size.y / 1000.0))
-#			x = randf_range(0, image_size.x / 2.0) + image_size.x / 4.0
-#			y = randf_range(0, image_size.y / 2.0) + image_size.y / 4.0
 			x = _bound_float(randfn(image_size.x / 2.0, image_size.x / randf_range(4.0, 6.0)))
 			y = _bound_float(randfn(image_size.y / 2.0, image_size.y / randf_range(4.0, 6.0)))
 			if agent_map[int(x)][int(y)] < max_occupancy:
 				cell_occupied = false
 				agent_map[int(x)][int(y)] += 1
+		rot = randf_range(0, 2*PI)
 		agents[i]['position'] = Vector2(x,y)
-		agents[i]['rotation'] = randf_range(0, 2*PI)
+		agents[i]['rotation'] = rot
 
 
 func _initialize_images() -> void:

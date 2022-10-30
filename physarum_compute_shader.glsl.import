@@ -1,0 +1,14 @@
+[remap]
+
+importer="glsl"
+type="RDShaderFile"
+uid="uid://dhdfaa5qpsq2q"
+path="res://.godot/imported/physarum_compute_shader.glsl-3a22862941c020e846ed86fade0efa51.res"
+
+[deps]
+
+source_file="res://physarum_compute_shader.glsl"
+dest_files=["res://.godot/imported/physarum_compute_shader.glsl-3a22862941c020e846ed86fade0efa51.res"]
+
+[params]
+
