@@ -1,6 +1,16 @@
 extends Node
 
+signal step_count_updated(step_count)
+signal process_time_updated(process_time)
+signal texture_time_updated(texture_time)
+signal buffer_update_time_updated(buffer_time)
+signal motor_sensory_time_updated(motor_sensory_time)
+signal diffusion_decay_time_updated(diffusion_decay_time)
+signal buffer_read_time_updated(buffer_read_time)
+
 # Environment parameters
+var step_counter : int = 0
+var process_time_elapsed : float = 0
 var viewport : Viewport
 var viewport_width : int
 var viewport_height : int
@@ -8,14 +18,14 @@ var image_size : Vector2i = Vector2i(512, 512)
 var n_pixels : int = image_size.x * image_size.y
 var population_percent : float = 150#randf_range(5, 40) # population as percentage of image area
 var diffusion_kernel_size : int = 3
-var decay_factor : float = 0.6#randf_range(0.9, 0.999) # Trail map diffusion decay factor
+var decay_factor : float = 0.8#randf_range(0.9, 0.999) # Trail map diffusion decay factor
 var max_occupancy : int = 3#randi_range(3, 10) # Maximum number of agents that can inhabit the same cell
 
 # Agent parameters
 var sensor_distance : float = 5#randf_range(3, 27) # sensor offset distance in pixels
 #var sensor_width : int = 1 # sensor width in pixels
-var sensor_angle : float = PI/2.1#randf_range(PI / 16.0, 15.0 * PI / 16.0) # sensor angle in degrees from forward position
-var rotation_angle : float = PI/3.5#randf_range(PI / 16.0, 15.0 * PI / 16.0) # agent rotiation angle in degrees
+var sensor_angle : float = PI/4.0#randf_range(PI / 16.0, 15.0 * PI / 16.0) # sensor angle in degrees from forward position
+var rotation_angle : float = PI/4.0#randf_range(PI / 16.0, 15.0 * PI / 16.0) # agent rotiation angle in degrees
 var step_size : float = 1#randf_range(1, 3) # how far agent moves per step
 var deposit_size : float = 5.0#randf_range(3, 15)
 #var prob_change_dir : float = 0 # probability of a random change in direction
@@ -55,51 +65,13 @@ var bindings : Array = []
 var dispatch_size_motor_sensory : int
 var dispatch_size_diffusion_decay : int
 
-# Control
-var frame_time : float = 0.1
-var frame_time_counter : float = 0.0
-var step_counter : int = 0
-
-@export var vbox_container : VBoxContainer
-
-@export var agent_label : Label
-@export var step_label : Label
-@export var process_time_label : Label
-@export var motor_sensory_time_label : Label
-@export var diffusion_decay_time_label : Label
-@export var buffer_read_time_label : Label
-@export var buffer_update_time_label : Label
-@export var texture_time_label : Label
-
-@export var population_percent_label : Label
-@export var decay_factor_label : Label
-@export var kernel_label : Label
-@export var sensor_distance_label : Label
-@export var sensor_angle_label : Label
-@export var rotation_angle_label : Label
-@export var step_size_label : Label
-@export var deposit_size_label : Label
 
 func _ready():
-	viewport = get_tree().get_root()
-	viewport.size_changed.connect(_on_Viewport_size_changed)
-	viewport_width = ProjectSettings.get_setting('display/window/size/viewport_width')
-	viewport_height = ProjectSettings.get_setting('display/window/size/viewport_height')
-	vbox_container.size = Vector2(viewport_width, viewport_height)
+	process_mode = Node.PROCESS_MODE_PAUSABLE
 	
 	n_agents = int(population_percent * image_size.x * image_size.y / 100.0)
 	dispatch_size_motor_sensory = ceili(float(n_agents) / float(work_group_size))
 	dispatch_size_diffusion_decay = ceili((float(n_pixels))/ float(work_group_size))
-	
-	agent_label.text = str(n_agents)
-	population_percent_label.text = String.num(population_percent, 1) + ' %'
-	decay_factor_label.text = String.num(decay_factor, 3)
-	kernel_label.text = str(diffusion_kernel_size)
-	sensor_distance_label.text = String.num(sensor_distance, 2)
-	sensor_angle_label.text = String.num(rad_to_deg(sensor_angle), 1) + ' deg'
-	rotation_angle_label.text = String.num(rad_to_deg(rotation_angle), 1) + ' deg'
-	step_size_label.text = String.num(step_size, 2)
-	deposit_size_label.text = String.num(deposit_size, 2)
 	
 	agent_sprite.material.set_shader_parameter('max_value', population_percent / 1)
 	trail_sprite.material.set_shader_parameter('max_value', population_percent / 18)
@@ -114,6 +86,8 @@ func _ready():
 	_setup_compute_shader()
 	
 	step_counter += 1
+	emit_signal('step_count_updated', step_counter)
+	get_tree().paused = true
 
 
 func _print_maps() -> void:
@@ -124,8 +98,8 @@ func _print_maps() -> void:
 	print(trail_image.get_data().to_float32_array())
 	print('')
 
-func _process(_delta):
-#	pass
+func _process(delta):
+	RenderingServer.global_shader_parameter_set('process_time', process_time_elapsed)
 	var start_time = Time.get_ticks_usec()
 
 	_process_compute_shader(stage.MOTOR_SENSORY)
@@ -137,22 +111,20 @@ func _process(_delta):
 	_update_compute_shader_buffers(stage.MOTOR_SENSORY)
 
 	_update_textures()
-	process_time_label.text = String.num((Time.get_ticks_usec() - start_time) / 1000.0, 1) + ' ms'
+	
 	step_counter += 1
-	step_label.text = str(step_counter)
+	process_time_elapsed += delta
+	emit_signal('step_count_updated', step_counter)
+	emit_signal('process_time_updated', (Time.get_ticks_usec() - start_time) / 1000.0)
 
 
 func _initialize_images() -> void:
-	agent_image = Image.new()
-	agent_image.create(image_size.x, image_size.y, false, Image.FORMAT_RF)
-	agent_texture = ImageTexture.new()
-	agent_texture = agent_texture.create_from_image(agent_image)
+	agent_image = Image.create(image_size.x, image_size.y, false, Image.FORMAT_RF)
+	agent_texture = ImageTexture.create_from_image(agent_image)
 	agent_sprite.texture = agent_texture
 	
-	trail_image = Image.new()
-	trail_image.create(image_size.x, image_size.y, false, Image.FORMAT_RF)
-	trail_texture = ImageTexture.new()
-	trail_texture = trail_texture.create_from_image(trail_image)
+	trail_image = Image.create(image_size.x, image_size.y, false, Image.FORMAT_RF)
+	trail_texture = ImageTexture.create_from_image(trail_image)
 	trail_sprite.texture = trail_texture
 
 
@@ -166,7 +138,7 @@ func _update_textures() -> void:
 #	trail_sprite.material.set_shader_parameter('max_value', trail_image_max)
 	agent_texture.update(agent_image)
 	trail_texture.update(trail_image)
-	texture_time_label.text = String.num((Time.get_ticks_usec() - start_time) / 1000.0, 1) + ' ms'
+	emit_signal('texture_time_updated', (Time.get_ticks_usec() - start_time) / 1000.0)
 
 
 func _initialize_agents() -> void:
@@ -301,8 +273,7 @@ func _update_compute_shader_buffers(compute_stage: int) -> void:
 	agent_map_uniform.binding = 4
 	agent_map_uniform.add_id(agent_map_buffer)
 	
-	var temp_image := Image.new()
-	temp_image.create(image_size.x, image_size.y, false, Image.FORMAT_RF)
+	var temp_image := Image.create(image_size.x, image_size.y, false, Image.FORMAT_RF)
 	agent_map_out_buffer = rd.texture_create(fmt, view, [temp_image.get_data()])
 	var agent_map_out_uniform := RDUniform.new()
 	agent_map_out_uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_IMAGE
@@ -321,7 +292,7 @@ func _update_compute_shader_buffers(compute_stage: int) -> void:
 	bindings[5] = agent_map_out_uniform
 	bindings[6] = trail_map_uniform
 	uniform_set = rd.uniform_set_create(bindings, shader, 0)
-	buffer_update_time_label.text = String.num((Time.get_ticks_usec() - start_time) / 1000.0, 1) + ' ms'
+	emit_signal('buffer_update_time_updated', (Time.get_ticks_usec() - start_time) / 1000.0)
 
 func _process_compute_shader(compute_stage: int) -> void:
 	if compute_stage == stage.MOTOR_SENSORY:
@@ -334,7 +305,7 @@ func _process_compute_shader(compute_stage: int) -> void:
 		rd.compute_list_end()
 		rd.submit()
 		rd.sync()
-		motor_sensory_time_label.text = String.num((Time.get_ticks_usec() - start_time) / 1000.0, 1) + ' ms'
+		emit_signal('motor_sensory_time_updated', (Time.get_ticks_usec() - start_time) / 1000.0)
 	elif compute_stage == stage.DIFFUSION_DECAY:
 		var start_time = Time.get_ticks_usec()
 		pipeline = rd.compute_pipeline_create(shader)
@@ -345,20 +316,33 @@ func _process_compute_shader(compute_stage: int) -> void:
 		rd.compute_list_end()
 		rd.submit()
 		rd.sync()
-		diffusion_decay_time_label.text = String.num((Time.get_ticks_usec() - start_time) / 1000.0, 1) + ' ms'
+		emit_signal('diffusion_decay_time_updated', (Time.get_ticks_usec() - start_time) / 1000.0)
 
 
 func _read_image_buffers(compute_stage: int) -> void:
 	var start_time = Time.get_ticks_usec()
 	if (compute_stage == stage.MOTOR_SENSORY):
 		var agent_image_data := rd.texture_get_data(agent_map_out_buffer, 0)
-		agent_image.create_from_data(image_size.x, image_size.y, false, Image.FORMAT_RF, agent_image_data)
+		agent_image = Image.create_from_data(image_size.x, image_size.y, false, Image.FORMAT_RF, agent_image_data)
 	var trail_image_data := rd.texture_get_data(trail_map_out_buffer, 0)
-	trail_image.create_from_data(image_size.x, image_size.y, false, Image.FORMAT_RF, trail_image_data)
-	buffer_read_time_label.text = String.num((Time.get_ticks_usec() - start_time) / 1000.0, 1) + ' ms'
+	trail_image = Image.create_from_data(image_size.x, image_size.y, false, Image.FORMAT_RF, trail_image_data)
+	emit_signal('buffer_read_time_updated', (Time.get_ticks_usec() - start_time) / 1000.0)
 
-
-func _on_Viewport_size_changed() -> void:
-	viewport_width = viewport.size.x
-	viewport_height = viewport.size.y
-	vbox_container.size = Vector2(viewport_width, viewport_height)
+func restart_simulation() -> void:
+	step_counter = 0
+	process_time_elapsed = 0
+	n_agents = int(population_percent * image_size.x * image_size.y / 100.0)
+	dispatch_size_motor_sensory = ceili(float(n_agents) / float(work_group_size))
+	dispatch_size_diffusion_decay = ceili((float(n_pixels))/ float(work_group_size))
+	
+	agent_sprite.material.set_shader_parameter('max_value', population_percent / 1)
+	trail_sprite.material.set_shader_parameter('max_value', population_percent / 18)
+	
+	_initialize_images()
+	_initialize_agents()
+	_update_textures()
+	_setup_compute_shader()
+	
+	step_counter += 1
+	emit_signal('step_count_updated', step_counter)
+	get_tree().paused = true

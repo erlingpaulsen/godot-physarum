@@ -16,5 +16,16 @@ config/icon="res://icon.svg"
 
 [display]
 
-window/size/viewport_width=1920
+window/size/viewport_width=1260
 window/size/viewport_height=1080
+
+[editor]
+
+movie_writer/movie_file="D:/Erling/Code/Godot/godot-physarum/physarum.avi"
+
+[shader_globals]
+
+process_time={
+"type": "float",
+"value": 0.0
+}
