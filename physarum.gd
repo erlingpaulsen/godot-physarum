@@ -92,7 +92,7 @@ func _ready():
 	step_counter += 1
 
 
-func _process(_delta):
+func _process(_delta: float) -> void:
 	var start_time = Time.get_ticks_usec()
 	_process_motor_stage()
 	_process_sensory_stage()
