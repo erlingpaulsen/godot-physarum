@@ -16,18 +16,19 @@ var viewport_width : int
 var viewport_height : int
 var image_size : Vector2i = Vector2i(512, 512)
 var n_pixels : int = image_size.x * image_size.y
-var population_percent : float = 150#randf_range(5, 40) # population as percentage of image area
+var population_percent : float = 150
+var population_initial_spread : float = 1.0
 var diffusion_kernel_size : int = 3
-var decay_factor : float = 0.8#randf_range(0.9, 0.999) # Trail map diffusion decay factor
-var max_occupancy : int = 3#randi_range(3, 10) # Maximum number of agents that can inhabit the same cell
+var decay_factor : float = 0.8
+var max_occupancy : int = 3
 
 # Agent parameters
-var sensor_distance : float = 5#randf_range(3, 27) # sensor offset distance in pixels
+var sensor_distance : float = 5
 #var sensor_width : int = 1 # sensor width in pixels
-var sensor_angle : float = PI/4.0#randf_range(PI / 16.0, 15.0 * PI / 16.0) # sensor angle in degrees from forward position
-var rotation_angle : float = PI/4.0#randf_range(PI / 16.0, 15.0 * PI / 16.0) # agent rotiation angle in degrees
-var step_size : float = 1#randf_range(1, 3) # how far agent moves per step
-var deposit_size : float = 5.0#randf_range(3, 15)
+var sensor_angle : float = PI/4.0
+var rotation_angle : float = PI/4.0
+var step_size : float = 1
+var deposit_size : float = 5.0
 #var prob_change_dir : float = 0 # probability of a random change in direction
 var n_agents : int
 
@@ -56,7 +57,6 @@ var agent_map_buffer : RID
 var agent_map_out_buffer : RID
 var trail_map_buffer : RID
 var trail_map_out_buffer : RID
-var debug_buffer : RID
 
 var uniform_set : RID
 var pipeline : RID
@@ -130,12 +130,6 @@ func _initialize_images() -> void:
 
 func _update_textures() -> void:
 	var start_time = Time.get_ticks_usec()
-#	var agent_image_array := Array(agent_image.get_data().to_float32_array())
-#	var agent_image_max : float = agent_image_array.max()
-#	var trail_image_array := Array(trail_image.get_data().to_float32_array())
-#	var trail_image_max : float = trail_image_array.max()
-#	agent_sprite.material.set_shader_parameter('max_value', agent_image_max)
-#	trail_sprite.material.set_shader_parameter('max_value', trail_image_max)
 	agent_texture.update(agent_image)
 	trail_texture.update(trail_image)
 	emit_signal('texture_time_updated', (Time.get_ticks_usec() - start_time) / 1000.0)
@@ -146,8 +140,8 @@ func _initialize_agents() -> void:
 	var y : float
 	var agent_image_v : float
 	for i in range(n_agents):
-		x = fposmod(randfn(image_size.x / 2.0, image_size.x / randf_range(16.0, 24.0)), float(image_size.x))
-		y = fposmod(randfn(image_size.y / 2.0, image_size.y / randf_range(16.0, 24.0)), float(image_size.y))
+		x = fposmod(randfn(image_size.x / 2.0, image_size.x / (randf_range(16.0, 24.0) / population_initial_spread)), float(image_size.x))
+		y = fposmod(randfn(image_size.y / 2.0, image_size.y / (randf_range(16.0, 24.0) / population_initial_spread)), float(image_size.y))
 		agent_image_v = agent_image.get_pixel(int(x), int(y)).r
 		agent_image.set_pixel(int(x), int(y), Color(agent_image_v + 1.0, 0, 0, 0))
 		agents_x.append(x)
@@ -232,18 +226,7 @@ func _setup_compute_shader() -> void:
 	trail_map_out_uniform.binding = 7
 	trail_map_out_uniform.add_id(trail_map_out_buffer)
 	
-	# Debug buffer
-	var debug_buffer_array : Array[float] = []
-	for i in range(n_pixels):
-		debug_buffer_array.append(0.0)
-	var debug_buffer_bytes := PackedFloat32Array(debug_buffer_array).to_byte_array()
-	debug_buffer = rd.storage_buffer_create(debug_buffer_bytes.size(), debug_buffer_bytes)
-	var debug_buffer_uniform := RDUniform.new()
-	debug_buffer_uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_STORAGE_BUFFER
-	debug_buffer_uniform.binding = 8
-	debug_buffer_uniform.add_id(debug_buffer)
-	
-	bindings = [agents_x_uniform, agents_y_uniform, agents_rot_uniform, params_uniform, agent_map_uniform, agent_map_out_uniform, trail_map_uniform, trail_map_out_uniform, debug_buffer_uniform]
+	bindings = [agents_x_uniform, agents_y_uniform, agents_rot_uniform, params_uniform, agent_map_uniform, agent_map_out_uniform, trail_map_uniform, trail_map_out_uniform]
 	uniform_set = rd.uniform_set_create(bindings, shader, 0)
 
 
@@ -329,6 +312,7 @@ func _read_image_buffers(compute_stage: int) -> void:
 	emit_signal('buffer_read_time_updated', (Time.get_ticks_usec() - start_time) / 1000.0)
 
 func restart_simulation() -> void:
+	
 	step_counter = 0
 	process_time_elapsed = 0
 	n_agents = int(population_percent * image_size.x * image_size.y / 100.0)
@@ -338,6 +322,10 @@ func restart_simulation() -> void:
 	agent_sprite.material.set_shader_parameter('max_value', population_percent / 1)
 	trail_sprite.material.set_shader_parameter('max_value', population_percent / 18)
 	
+	agents_x = []
+	agents_y = []
+	agents_rot = []
+	
 	_initialize_images()
 	_initialize_agents()
 	_update_textures()
@@ -346,3 +334,4 @@ func restart_simulation() -> void:
 	step_counter += 1
 	emit_signal('step_count_updated', step_counter)
 	get_tree().paused = true
+

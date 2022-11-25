@@ -11,8 +11,8 @@ config_version=5
 [application]
 
 config/name="godot-physarum"
+run/main_scene="res://physarum.tscn"
 config/features=PackedStringArray("4.0")
-config/icon="res://icon.svg"
 
 [display]
 
@@ -22,6 +22,11 @@ window/size/viewport_height=1080
 [editor]
 
 movie_writer/movie_file="D:/Erling/Code/Godot/godot-physarum/physarum.avi"
+
+[rendering]
+
+textures/vram_compression/import_s3tc=false
+textures/vram_compression/import_etc2=false
 
 [shader_globals]
 

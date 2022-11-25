@@ -38,10 +38,6 @@ layout(r32f, binding = 6) uniform image2D trail_map;
 
 layout(r32f, binding = 7) uniform image2D trail_map_out;
 
-layout(set = 0, binding = 8, std430) restrict buffer Debug {
-    float data[];
-} debug;
-
 float rand(float n) {
     return fract(sin(n) * 43758.5453123);
 }

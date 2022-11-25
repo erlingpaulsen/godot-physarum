@@ -21,10 +21,10 @@ shader_parameter/max_value = null
 
 [node name="Physarum" type="Node2D" parent="." node_paths=PackedStringArray("agent_sprite", "trail_sprite")]
 script = ExtResource("1_qw6si")
-agent_sprite = NodePath("../UI/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/AgentTexture")
-trail_sprite = NodePath("../UI/VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer/TrailTexture")
+agent_sprite = NodePath("../Control/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/SubViewportContainer/AgentViewport/AgentTexture")
+trail_sprite = NodePath("../Control/VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer/SubViewportContainer/TrailViewport/TrailTexture")
 
-[node name="UI" type="Control" parent="." node_paths=PackedStringArray("physarum", "vbox_container", "agent_label", "step_label", "process_time_label", "motor_sensory_time_label", "diffusion_decay_time_label", "buffer_read_time_label", "buffer_update_time_label", "texture_time_label", "population_percent_label", "decay_factor_label", "kernel_label", "sensor_distance_label", "sensor_angle_label", "rotation_angle_label", "step_size_label", "deposit_size_label", "population_percent_slider", "decay_factor_slider", "kernel_slider", "sensor_distance_slider", "sensor_angle_slider", "rotation_angle_slider", "step_size_slider", "deposit_size_slider", "start_pause_button")]
+[node name="Control" type="Control" parent="." node_paths=PackedStringArray("physarum", "vbox_container", "agent_label", "step_label", "process_time_label", "motor_sensory_time_label", "diffusion_decay_time_label", "buffer_read_time_label", "buffer_update_time_label", "texture_time_label", "restart_label", "population_percent_label", "population_spread_label", "decay_factor_label", "kernel_label", "sensor_distance_label", "sensor_angle_label", "rotation_angle_label", "step_size_label", "deposit_size_label", "population_percent_slider", "population_spread_slider", "decay_factor_slider", "kernel_slider", "sensor_distance_slider", "sensor_angle_slider", "rotation_angle_slider", "step_size_slider", "deposit_size_slider", "start_pause_button", "file_dialog", "agent_map_viewport", "trail_map_viewport")]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -40,7 +40,9 @@ diffusion_decay_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/Margin
 buffer_read_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/BufferReadTime")
 buffer_update_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/BufferUpdateTime")
 texture_time_label = NodePath("VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2/TextureTime")
+restart_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4/RestartLabel")
 population_percent_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/PopulationPercent")
+population_spread_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/PopulationSpread")
 decay_factor_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/DecayFactor")
 kernel_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/KernelSize")
 sensor_distance_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/SensorDistance")
@@ -49,6 +51,7 @@ rotation_angle_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginConta
 step_size_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/StepSize")
 deposit_size_label = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2/DepositSize")
 population_percent_slider = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/PopulationPercentSlider")
+population_spread_slider = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/PopulationSpreadSlider")
 decay_factor_slider = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/DecaySlider")
 kernel_slider = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/KernelSizeSlider")
 sensor_distance_slider = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/SensorDistanceSlider")
@@ -57,8 +60,11 @@ rotation_angle_slider = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginCont
 step_size_slider = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/StepSizeSlider")
 deposit_size_slider = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/DepositSizeSlider")
 start_pause_button = NodePath("VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4/StartButton")
+file_dialog = NodePath("../Dialog/FileDialog")
+agent_map_viewport = NodePath("VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/SubViewportContainer/AgentViewport")
+trail_map_viewport = NodePath("VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer/SubViewportContainer/TrailViewport")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -70,14 +76,14 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Panel" type="Panel" parent="UI/VBoxContainer"]
+[node name="Panel" type="Panel" parent="Control/VBoxContainer"]
 layout_mode = 2
 offset_right = 1960.0
 offset_bottom = 130.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.2
 
-[node name="Title" type="Label" parent="UI/VBoxContainer/Panel"]
+[node name="Title" type="Label" parent="Control/VBoxContainer/Panel"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -94,7 +100,7 @@ theme_override_font_sizes/font_size = 28
 text = "Physarum Polycephalum Simulation"
 horizontal_alignment = 1
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/VBoxContainer"]
 layout_mode = 2
 offset_top = 134.0
 offset_right = 1960.0
@@ -102,13 +108,13 @@ offset_bottom = 788.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Panel" type="Panel" parent="UI/VBoxContainer/HBoxContainer"]
+[node name="Panel" type="Panel" parent="Control/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 offset_right = 978.0
 offset_bottom = 654.0
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="UI/VBoxContainer/HBoxContainer/Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="Control/VBoxContainer/HBoxContainer/Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -120,7 +126,7 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/VBoxContainer/HBoxContainer/Panel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer/Panel/MarginContainer"]
 layout_mode = 2
 offset_left = 20.0
 offset_top = 20.0
@@ -129,7 +135,7 @@ offset_bottom = 634.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="UI/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="Control/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 offset_right = 938.0
 offset_bottom = 37.0
@@ -138,26 +144,39 @@ theme_override_font_sizes/font_size = 24
 text = "Agent Map"
 horizontal_alignment = 1
 
-[node name="AgentTexture" type="TextureRect" parent="UI/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
-material = SubResource("ShaderMaterial_e7lq4")
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 41.0
 offset_right = 938.0
 offset_bottom = 614.0
+size_flags_vertical = 3
+stretch = true
+
+[node name="AgentViewport" type="SubViewport" parent="Control/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/SubViewportContainer"]
+disable_3d = true
+transparent_bg = true
+size = Vector2i(938, 559)
+render_target_update_mode = 4
+
+[node name="AgentTexture" type="TextureRect" parent="Control/VBoxContainer/HBoxContainer/Panel/MarginContainer/VBoxContainer/SubViewportContainer/AgentViewport"]
+material = SubResource("ShaderMaterial_e7lq4")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="Panel2" type="Panel" parent="UI/VBoxContainer/HBoxContainer"]
+[node name="Panel2" type="Panel" parent="Control/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 offset_left = 982.0
 offset_right = 1960.0
 offset_bottom = 654.0
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="UI/VBoxContainer/HBoxContainer/Panel2"]
+[node name="MarginContainer" type="MarginContainer" parent="Control/VBoxContainer/HBoxContainer/Panel2"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -169,7 +188,7 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/VBoxContainer/HBoxContainer/Panel2/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer/Panel2/MarginContainer"]
 layout_mode = 2
 offset_left = 20.0
 offset_top = 20.0
@@ -178,7 +197,7 @@ offset_bottom = 634.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Label" type="Label" parent="UI/VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="Control/VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer"]
 layout_mode = 2
 offset_right = 938.0
 offset_bottom = 37.0
@@ -187,19 +206,31 @@ theme_override_font_sizes/font_size = 24
 text = "Trail Map"
 horizontal_alignment = 1
 
-[node name="TrailTexture" type="TextureRect" parent="UI/VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer"]
-material = SubResource("ShaderMaterial_vdptg")
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control/VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 41.0
 offset_right = 938.0
 offset_bottom = 614.0
+size_flags_vertical = 3
+stretch = true
+
+[node name="TrailViewport" type="SubViewport" parent="Control/VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer/SubViewportContainer"]
+disable_3d = true
+transparent_bg = true
+render_target_update_mode = 4
+
+[node name="TrailTexture" type="TextureRect" parent="Control/VBoxContainer/HBoxContainer/Panel2/MarginContainer/VBoxContainer/SubViewportContainer/TrailViewport"]
+material = SubResource("ShaderMaterial_vdptg")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="UI/VBoxContainer"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Control/VBoxContainer"]
 layout_mode = 2
 offset_top = 792.0
 offset_right = 1960.0
@@ -207,7 +238,7 @@ offset_bottom = 1120.0
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.5
 
-[node name="Panel" type="Panel" parent="UI/VBoxContainer/HBoxContainer2"]
+[node name="Panel" type="Panel" parent="Control/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 offset_right = 558.0
 offset_bottom = 328.0
@@ -215,7 +246,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.4
 
-[node name="MarginContainer" type="MarginContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -229,7 +260,7 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 20
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer"]
 layout_mode = 2
 offset_left = 20.0
 offset_top = 20.0
@@ -237,14 +268,14 @@ offset_right = 538.0
 offset_bottom = 326.0
 theme_override_constants/separation = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer"]
 layout_mode = 2
 offset_right = 249.0
 offset_bottom = 306.0
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="Label8" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label8" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 59.0
 offset_right = 249.0
@@ -254,7 +285,7 @@ text = "Agents"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label7" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label7" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 83.0
 offset_right = 249.0
@@ -264,7 +295,7 @@ text = "Steps"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 107.0
 offset_right = 249.0
@@ -274,7 +305,7 @@ text = "Process time"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label2" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 131.0
 offset_right = 249.0
@@ -284,7 +315,7 @@ text = "Motor sensory stage"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label4" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label4" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 155.0
 offset_right = 249.0
@@ -294,7 +325,7 @@ text = "Diffusion decay stage"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label5" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label5" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 179.0
 offset_right = 249.0
@@ -304,7 +335,7 @@ text = "Buffer read stage"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label9" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label9" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 203.0
 offset_right = 249.0
@@ -314,7 +345,7 @@ text = "Buffer update stage"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label6" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label6" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 offset_top = 227.0
 offset_right = 249.0
@@ -324,7 +355,7 @@ text = "Texture update stage"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer"]
 layout_mode = 2
 offset_left = 269.0
 offset_right = 518.0
@@ -332,7 +363,8 @@ offset_bottom = 306.0
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="Agents" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="Agents" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 offset_top = 59.0
 offset_right = 249.0
@@ -341,7 +373,8 @@ theme_override_font_sizes/font_size = 12
 text = " "
 vertical_alignment = 1
 
-[node name="Step" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="Step" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 offset_top = 83.0
 offset_right = 249.0
@@ -350,7 +383,8 @@ theme_override_font_sizes/font_size = 12
 text = " "
 vertical_alignment = 1
 
-[node name="ProcessTime" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="ProcessTime" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 offset_top = 107.0
 offset_right = 249.0
@@ -359,7 +393,8 @@ theme_override_font_sizes/font_size = 12
 text = " "
 vertical_alignment = 1
 
-[node name="MotorSensoryTime" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="MotorSensoryTime" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 offset_top = 131.0
 offset_right = 249.0
@@ -368,7 +403,8 @@ theme_override_font_sizes/font_size = 12
 text = " "
 vertical_alignment = 1
 
-[node name="DiffusionDecayTime" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="DiffusionDecayTime" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 offset_top = 155.0
 offset_right = 249.0
@@ -377,7 +413,8 @@ theme_override_font_sizes/font_size = 12
 text = " "
 vertical_alignment = 1
 
-[node name="BufferReadTime" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="BufferReadTime" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 offset_top = 179.0
 offset_right = 249.0
@@ -386,7 +423,8 @@ theme_override_font_sizes/font_size = 12
 text = " "
 vertical_alignment = 1
 
-[node name="BufferUpdateTime" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="BufferUpdateTime" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 offset_top = 203.0
 offset_right = 249.0
@@ -395,7 +433,8 @@ theme_override_font_sizes/font_size = 12
 text = " "
 vertical_alignment = 1
 
-[node name="TextureTime" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="TextureTime" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel/MarginContainer/HBoxContainer/VBoxContainer2"]
+custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
 offset_top = 227.0
 offset_right = 249.0
@@ -404,14 +443,14 @@ theme_override_font_sizes/font_size = 12
 text = " "
 vertical_alignment = 1
 
-[node name="Panel2" type="Panel" parent="UI/VBoxContainer/HBoxContainer2"]
+[node name="Panel2" type="Panel" parent="Control/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
 offset_left = 562.0
 offset_right = 1960.0
 offset_bottom = 328.0
 size_flags_horizontal = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel2"]
+[node name="MarginContainer" type="MarginContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel2"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -425,101 +464,111 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 100
 theme_override_constants/margin_bottom = 20
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer"]
 layout_mode = 2
 offset_top = 20.0
 offset_right = 1298.0
 offset_bottom = 326.0
 theme_override_constants/separation = 20
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
 layout_mode = 2
 offset_right = 353.0
 offset_bottom = 306.0
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="Label8" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label8" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-offset_top = 59.0
+offset_top = 47.0
 offset_right = 353.0
-offset_bottom = 79.0
+offset_bottom = 67.0
 theme_override_font_sizes/font_size = 12
 text = "Population percent"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label7" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label9" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-offset_top = 83.0
+offset_top = 71.0
 offset_right = 353.0
-offset_bottom = 103.0
+offset_bottom = 91.0
+theme_override_font_sizes/font_size = 12
+text = "Population initial spread"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Label7" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+offset_top = 95.0
+offset_right = 353.0
+offset_bottom = 115.0
 theme_override_font_sizes/font_size = 12
 text = "Decay factor"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-offset_top = 107.0
+offset_top = 119.0
 offset_right = 353.0
-offset_bottom = 127.0
+offset_bottom = 139.0
 theme_override_font_sizes/font_size = 12
 text = "Diffusion kernel size"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label2" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label2" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-offset_top = 131.0
+offset_top = 143.0
 offset_right = 353.0
-offset_bottom = 151.0
+offset_bottom = 163.0
 theme_override_font_sizes/font_size = 12
 text = "Sensor distance"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label3" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label3" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-offset_top = 155.0
+offset_top = 167.0
 offset_right = 353.0
-offset_bottom = 175.0
+offset_bottom = 187.0
 theme_override_font_sizes/font_size = 12
 text = "Sensor angle"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label4" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label4" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-offset_top = 179.0
+offset_top = 191.0
 offset_right = 353.0
-offset_bottom = 199.0
+offset_bottom = 211.0
 theme_override_font_sizes/font_size = 12
 text = "Rotation angle"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label5" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label5" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-offset_top = 203.0
+offset_top = 215.0
 offset_right = 353.0
-offset_bottom = 223.0
+offset_bottom = 235.0
 theme_override_font_sizes/font_size = 12
 text = "Step size"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Label6" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
+[node name="Label6" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-offset_top = 227.0
+offset_top = 239.0
 offset_right = 353.0
-offset_bottom = 247.0
+offset_bottom = 259.0
 theme_override_font_sizes/font_size = 12
 text = "Deposit size"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
 layout_mode = 2
 offset_left = 373.0
 offset_right = 550.0
@@ -528,71 +577,79 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.5
 alignment = 1
 
-[node name="PopulationPercent" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="PopulationPercent" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
-offset_top = 71.0
+offset_top = 60.0
 offset_right = 177.0
-offset_bottom = 88.0
+offset_bottom = 77.0
 theme_override_font_sizes/font_size = 12
 vertical_alignment = 1
 
-[node name="DecayFactor" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="PopulationSpread" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
-offset_top = 92.0
+offset_top = 81.0
 offset_right = 177.0
-offset_bottom = 109.0
+offset_bottom = 98.0
 theme_override_font_sizes/font_size = 12
 vertical_alignment = 1
 
-[node name="KernelSize" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="DecayFactor" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
-offset_top = 113.0
+offset_top = 102.0
 offset_right = 177.0
-offset_bottom = 130.0
+offset_bottom = 119.0
 theme_override_font_sizes/font_size = 12
 vertical_alignment = 1
 
-[node name="SensorDistance" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="KernelSize" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
-offset_top = 134.0
+offset_top = 123.0
 offset_right = 177.0
-offset_bottom = 151.0
+offset_bottom = 140.0
 theme_override_font_sizes/font_size = 12
 vertical_alignment = 1
 
-[node name="SensorAngle" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="SensorDistance" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
-offset_top = 155.0
+offset_top = 144.0
 offset_right = 177.0
-offset_bottom = 172.0
+offset_bottom = 161.0
 theme_override_font_sizes/font_size = 12
 vertical_alignment = 1
 
-[node name="RotationAngle" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="SensorAngle" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
-offset_top = 176.0
+offset_top = 165.0
 offset_right = 177.0
-offset_bottom = 193.0
+offset_bottom = 182.0
 theme_override_font_sizes/font_size = 12
 vertical_alignment = 1
 
-[node name="StepSize" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="RotationAngle" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
-offset_top = 197.0
+offset_top = 186.0
 offset_right = 177.0
-offset_bottom = 214.0
+offset_bottom = 203.0
 theme_override_font_sizes/font_size = 12
 vertical_alignment = 1
 
-[node name="DepositSize" type="Label" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+[node name="StepSize" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
 layout_mode = 2
-offset_top = 218.0
+offset_top = 207.0
 offset_right = 177.0
-offset_bottom = 235.0
+offset_bottom = 224.0
 theme_override_font_sizes/font_size = 12
 vertical_alignment = 1
 
-[node name="VBoxContainer3" type="VBoxContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
+[node name="DepositSize" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+offset_top = 228.0
+offset_right = 177.0
+offset_bottom = 245.0
+theme_override_font_sizes/font_size = 12
+vertical_alignment = 1
+
+[node name="VBoxContainer3" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
 layout_mode = 2
 offset_left = 570.0
 offset_right = 924.0
@@ -600,96 +657,108 @@ offset_bottom = 306.0
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="PopulationPercentSlider" type="HSlider" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
+[node name="PopulationPercentSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-offset_top = 59.0
+offset_top = 47.0
 offset_right = 354.0
-offset_bottom = 79.0
+offset_bottom = 67.0
 min_value = 5.0
 max_value = 200.0
 step = 0.5
 value = 5.0
 tick_count = 10
 
-[node name="DecaySlider" type="HSlider" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
+[node name="PopulationSpreadSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-offset_top = 83.0
+offset_top = 71.0
 offset_right = 354.0
-offset_bottom = 103.0
+offset_bottom = 91.0
+min_value = 0.1
+max_value = 8.0
+step = 0.1
+value = 0.1
+tick_count = 10
+
+[node name="DecaySlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+offset_top = 95.0
+offset_right = 354.0
+offset_bottom = 115.0
 max_value = 1.0
 step = 0.01
 tick_count = 10
 
-[node name="KernelSizeSlider" type="HSlider" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
+[node name="KernelSizeSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-offset_top = 107.0
+offset_top = 119.0
 offset_right = 354.0
-offset_bottom = 127.0
+offset_bottom = 139.0
 min_value = 3.0
 max_value = 15.0
 value = 3.0
 tick_count = 7
 
-[node name="SensorDistanceSlider" type="HSlider" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
+[node name="SensorDistanceSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-offset_top = 131.0
+offset_top = 143.0
 offset_right = 354.0
-offset_bottom = 151.0
+offset_bottom = 163.0
 min_value = 3.0
 max_value = 27.0
 step = 0.5
 value = 3.0
 tick_count = 10
 
-[node name="SensorAngleSlider" type="HSlider" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
+[node name="SensorAngleSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-offset_top = 155.0
+offset_top = 167.0
 offset_right = 354.0
-offset_bottom = 175.0
+offset_bottom = 187.0
 max_value = 3.142
 step = 0.05
 tick_count = 10
 
-[node name="RotationAngleSlider" type="HSlider" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
+[node name="RotationAngleSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-offset_top = 179.0
+offset_top = 191.0
 offset_right = 354.0
-offset_bottom = 199.0
+offset_bottom = 211.0
 max_value = 3.142
 step = 0.05
 tick_count = 10
 
-[node name="StepSizeSlider" type="HSlider" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
+[node name="StepSizeSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-offset_top = 203.0
+offset_top = 215.0
 offset_right = 354.0
-offset_bottom = 223.0
+offset_bottom = 235.0
 min_value = 1.0
 max_value = 10.0
 step = 0.5
 value = 1.0
 tick_count = 10
 
-[node name="DepositSizeSlider" type="HSlider" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
+[node name="DepositSizeSlider" type="HSlider" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3"]
 custom_minimum_size = Vector2(0, 20)
 layout_mode = 2
-offset_top = 227.0
+offset_top = 239.0
 offset_right = 354.0
-offset_bottom = 247.0
+offset_bottom = 259.0
 min_value = 1.0
 max_value = 20.0
 step = 0.1
 value = 1.0
 tick_count = 10
 
-[node name="VBoxContainer4" type="VBoxContainer" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
+[node name="VBoxContainer4" type="VBoxContainer" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer"]
 layout_mode = 2
 offset_left = 944.0
 offset_right = 1298.0
@@ -698,36 +767,64 @@ size_flags_horizontal = 3
 theme_override_constants/separation = 10
 alignment = 1
 
-[node name="StartButton" type="Button" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4"]
+[node name="StartButton" type="Button" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4"]
 layout_mode = 2
-offset_top = 117.0
+offset_top = 83.0
 offset_right = 354.0
-offset_bottom = 148.0
+offset_bottom = 114.0
 toggle_mode = true
 text = "Start"
 
-[node name="RestartButton" type="Button" parent="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4"]
+[node name="RestartButton" type="Button" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4"]
 layout_mode = 2
-offset_top = 158.0
+offset_top = 124.0
 offset_right = 354.0
-offset_bottom = 189.0
+offset_bottom = 155.0
 text = "Restart"
 
-[connection signal="buffer_read_time_updated" from="Physarum" to="UI" method="_on_physarum_buffer_read_time_updated"]
-[connection signal="buffer_update_time_updated" from="Physarum" to="UI" method="_on_physarum_buffer_update_time_updated"]
-[connection signal="diffusion_decay_time_updated" from="Physarum" to="UI" method="_on_physarum_diffusion_decay_time_updated"]
-[connection signal="motor_sensory_time_updated" from="Physarum" to="UI" method="_on_physarum_motor_sensory_time_updated"]
-[connection signal="process_time_updated" from="Physarum" to="UI" method="_on_physarum_process_time_updated"]
-[connection signal="ready" from="Physarum" to="UI" method="_on_physarum_ready"]
-[connection signal="step_count_updated" from="Physarum" to="UI" method="_on_physarum_step_count_updated"]
-[connection signal="texture_time_updated" from="Physarum" to="UI" method="_on_physarum_texture_time_updated"]
-[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/PopulationPercentSlider" to="UI" method="_on_population_percent_slider_value_changed"]
-[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/DecaySlider" to="UI" method="_on_decay_slider_value_changed"]
-[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/KernelSizeSlider" to="UI" method="_on_kernel_size_slider_value_changed"]
-[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/SensorDistanceSlider" to="UI" method="_on_sensor_distance_slider_value_changed"]
-[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/SensorAngleSlider" to="UI" method="_on_sensor_angle_slider_value_changed"]
-[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/RotationAngleSlider" to="UI" method="_on_rotation_angle_slider_value_changed"]
-[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/StepSizeSlider" to="UI" method="_on_step_size_slider_value_changed"]
-[connection signal="value_changed" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/DepositSizeSlider" to="UI" method="_on_deposit_size_slider_value_changed"]
-[connection signal="toggled" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4/StartButton" to="UI" method="_on_start_button_toggled"]
-[connection signal="pressed" from="UI/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4/RestartButton" to="UI" method="_on_restart_button_pressed"]
+[node name="RestartLabel" type="Label" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4"]
+layout_mode = 2
+offset_top = 165.0
+offset_right = 354.0
+offset_bottom = 182.0
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+
+[node name="SaveButton" type="Button" parent="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4"]
+layout_mode = 2
+offset_top = 192.0
+offset_right = 354.0
+offset_bottom = 223.0
+text = "Save Images"
+
+[node name="Dialog" type="Node" parent="."]
+
+[node name="FileDialog" type="FileDialog" parent="Dialog"]
+title = "Open a Directory"
+position = Vector2i(570, 824)
+size = Vector2i(922, 290)
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+
+[connection signal="buffer_read_time_updated" from="Physarum" to="Control" method="_on_physarum_buffer_read_time_updated"]
+[connection signal="buffer_update_time_updated" from="Physarum" to="Control" method="_on_physarum_buffer_update_time_updated"]
+[connection signal="diffusion_decay_time_updated" from="Physarum" to="Control" method="_on_physarum_diffusion_decay_time_updated"]
+[connection signal="motor_sensory_time_updated" from="Physarum" to="Control" method="_on_physarum_motor_sensory_time_updated"]
+[connection signal="process_time_updated" from="Physarum" to="Control" method="_on_physarum_process_time_updated"]
+[connection signal="ready" from="Physarum" to="Control" method="_on_physarum_ready"]
+[connection signal="step_count_updated" from="Physarum" to="Control" method="_on_physarum_step_count_updated"]
+[connection signal="texture_time_updated" from="Physarum" to="Control" method="_on_physarum_texture_time_updated"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/PopulationPercentSlider" to="Control" method="_on_population_percent_slider_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/PopulationSpreadSlider" to="Control" method="_on_population_spread_slider_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/DecaySlider" to="Control" method="_on_decay_slider_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/KernelSizeSlider" to="Control" method="_on_kernel_size_slider_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/SensorDistanceSlider" to="Control" method="_on_sensor_distance_slider_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/SensorAngleSlider" to="Control" method="_on_sensor_angle_slider_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/RotationAngleSlider" to="Control" method="_on_rotation_angle_slider_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/StepSizeSlider" to="Control" method="_on_step_size_slider_value_changed"]
+[connection signal="value_changed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer3/DepositSizeSlider" to="Control" method="_on_deposit_size_slider_value_changed"]
+[connection signal="toggled" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4/StartButton" to="Control" method="_on_start_button_toggled"]
+[connection signal="pressed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4/RestartButton" to="Control" method="_on_restart_button_pressed"]
+[connection signal="pressed" from="Control/VBoxContainer/HBoxContainer2/Panel2/MarginContainer/HBoxContainer/VBoxContainer4/SaveButton" to="Control" method="_on_save_button_pressed"]
+[connection signal="dir_selected" from="Dialog/FileDialog" to="Control" method="_on_file_dialog_dir_selected"]
